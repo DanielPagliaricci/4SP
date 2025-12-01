@@ -3,38 +3,39 @@
 
 import os
 import json
+import re
 import numpy as np
 import matplotlib.pyplot as plt
 from utils import load_vertex_data, compute_hybrid_features_all_vertices, load_quaternion_from_json, load_mesh_geometry
 
-# --- Configuration Constants ---
+#############################
+# CONFIGURATIONS #
+#############################
 IMAGE_WIDTH = 1920
 IMAGE_HEIGHT = 1080
 BATCH_SIZE = 100000  # Process files in batches of this size
 AMOUNT_DATA_PER_REAL_DATA = 10#15  # Number of augmented samples per JSON
 
-# --- Noise Hyperparameters ---
-# Small noise is applied to all vertices; big noise is applied to a subset
-# of vertices controlled by BIG_NOISE_APPLY_TO_VISIBLE (True => visible, False => non-visible)
+# NOISE HYPERPARAMETERS #
 NOISE_SMALL_PX = 8.0
 NOISE_BIG_PX = 10.0
 NOISE_MAX_BIG_VERTICES = 4
 BIG_NOISE_APPLY_TO_VISIBLE = False
 
-BASE_DATA_DIR = "/Users/dani/Desktop/ICTati/Second_Attempt_AngularDataBase/TANGO"
-DATA_DIR = os.path.join(BASE_DATA_DIR, "1M")
-#DATA_DIR = os.path.join(BASE_DATA_DIR, "vertices_data_sample_TANGO_REF_sample1")
-OBJECT_MESH_PATH = os.path.join(BASE_DATA_DIR, "Object_Information", "mesh_information_REF_TANGO.json")
+# PATHS #
+BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR: str = os.path.dirname(BASE_DIR)
 
-# Use a separate output directory for noised data
-OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "saves_vastai_noise_not_visible_1M")
-OUTPUT_DIR = os.path.join(OUTPUT_DIR, "data_batch")
+JSON_DIR: str = os.path.join(ROOT_DIR, "Database" , "Only_Obj_Env" , "JSON_Data_REF")
+IMAGES_DIR: str = os.path.join(ROOT_DIR, "Database" , "Only_Obj_Env" , "Rendered_Images")
+MESH_DIR: str = os.path.join(ROOT_DIR, "Database" , "Only_Obj_Env" , "Object_Information", "mesh_information_MASK_TANGO.json")
+OUTPUT_DIR = os.path.join(BASE_DIR, "saves")
+#OUTPUT_DIR = os.path.join(OUTPUT_DIR, "data_batch")
 
-# --- Visualization Options ---
-ENABLE_OVERLAY_VISUALIZATION = False  # Set to True to save overlays
+# VISUALIZATION OPTIONS #
+ENABLE_OVERLAY_VISUALIZATION = True  # Set to True to save overlays
 MAX_OVERLAY_SAMPLES = 10            # Maximum number of overlays to save across the run
-IMAGES_DIR = os.path.join(BASE_DATA_DIR, "renders_sample_TANGO_sample1")  # Folder containing images
-OVERLAYS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "visual_inspection")
+OVERLAYS_DIR = os.path.join(BASE_DIR, "visual_inspection")
 
 if not os.path.exists(OVERLAYS_DIR) and ENABLE_OVERLAY_VISUALIZATION:   
     os.makedirs(OVERLAYS_DIR, exist_ok=True)
@@ -184,11 +185,70 @@ def add_pixel_noise_to_vertices(
     return v.astype(np.float32).flatten()
 
 
+def combine_batches(output_dir: str):
+    """
+    Combines all X_data_batch_*.npy and Y_data_batch_*.npy files in output_dir
+    into single X_data.npy and Y_data.npy files respectively.
+    """
+    print(f"\nStarting batch combination in {output_dir}...")
+    
+    if not os.path.isdir(output_dir):
+        print(f"Error: Output directory not found at {output_dir}")
+        return
+
+    # Find all batch files and sort them numerically
+    x_files = sorted(
+        [f for f in os.listdir(output_dir) if f.startswith('X_data_batch_') and f.endswith('.npy')],
+        key=lambda f: int(re.search(r'(\d+)', f).group(1))
+    )
+    y_files = sorted(
+        [f for f in os.listdir(output_dir) if f.startswith('Y_data_batch_') and f.endswith('.npy')],
+        key=lambda f: int(re.search(r'(\d+)', f).group(1))
+    )
+
+    if not x_files or not y_files:
+        print("No batch files found to combine.")
+        return
+
+    if len(x_files) != len(y_files):
+        print("Warning: Mismatch between number of X and Y batch files.")
+        min_len = min(len(x_files), len(y_files))
+        x_files = x_files[:min_len]
+        y_files = y_files[:min_len]
+
+    print(f"Found {len(x_files)} X batches and {len(y_files)} Y batches to combine.")
+
+    # Load and concatenate all batches
+    # Use a list comprehension to load and immediately concatenate to save memory if possible, 
+    # but here we follow the pattern of loading all then concatenating which is standard for numpy
+    try:
+        x_total = np.concatenate([np.load(os.path.join(output_dir, f)) for f in x_files], axis=0)
+        y_total = np.concatenate([np.load(os.path.join(output_dir, f)) for f in y_files], axis=0)
+    except Exception as e:
+        print(f"Error during concatenation: {e}")
+        return
+
+    print("Concatenation complete. Final shapes are:")
+    print(f"  X_data: {x_total.shape}")
+    print(f"  Y_data: {y_total.shape}")
+
+    # Define output paths for the final combined files
+    output_x_path = os.path.join(BASE_DIR, 'X_data.npy')
+    output_y_path = os.path.join(BASE_DIR, 'Y_data.npy')
+
+    # Save the final combined data
+    np.save(output_x_path, x_total)
+    np.save(output_y_path, y_total)
+
+    print(f"Successfully saved combined data to {output_x_path}")
+    print(f"Successfully saved combined data to {output_y_path}")
+
+
 def main():
     # --- Path Setup ---
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    data_dir = DATA_DIR
+    data_dir = JSON_DIR
 
     if os.path.exists(OUTPUT_DIR):
         print(f"Output directory {OUTPUT_DIR} already exists. Please delete it or choose a different output directory.")
@@ -197,11 +257,11 @@ def main():
         os.makedirs(OUTPUT_DIR)
 
     try:
-        edges, faces, total_vertices = load_mesh_geometry(OBJECT_MESH_PATH)
+        edges, faces, total_vertices = load_mesh_geometry(MESH_DIR)
         if not faces:
             print("Warning: 'face_composition' missing or empty in mesh_information.json; proceeding with empty faces list.")
     except Exception as e:
-        print(f"Error loading mesh information from {OBJECT_MESH_PATH}: {e}")
+        print(f"Error loading mesh information from {MESH_DIR}: {e}")
         return
 
     print(f"Data directory: {data_dir}")
@@ -321,6 +381,9 @@ def main():
         print(f"Successfully saved final batch label data to {output_y_path}")
 
     print(f"\nAll batches processed with noise. Total files: {files_processed}. Total samples: {samples_processed}.")
+
+    # Combine batches at the end
+    combine_batches(OUTPUT_DIR)
 
 
 if __name__ == "__main__":

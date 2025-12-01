@@ -32,16 +32,17 @@ def configure_gpu():
         print(f"GPU setup error: {e}")
 
 #############################
-# Configuration Parameters
+# CONFIGURATION PARAMETERS #
 #############################
-MODEL_SAVE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "saves_vastai", "Tango_v1.h5")
+BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
+MODEL_SAVE_PATH = os.path.join(BASE_DIR, "saves", "4SP.h5")
 IMAGE_WIDTH = 1920
 IMAGE_HEIGHT = 1080
 TRAIN_VAL_SPLIT_RATIO = 0.8
 LEARNING_RATE = 1e-4  # Initial learning rate for CosineDecayRestarts
 WEIGHT_DECAY = 1e-4 # Weight decay for AdamW optimizer
-BATCH_SIZE = 512#128
-EPOCHS = 100
+BATCH_SIZE = 1#512#128
+EPOCHS = 5#100
 DROP_OUT_RATE = 0.1
 USE_ADAMW = False  # Toggle between AdamW and Adam+L2-on-kernels
 L2_REGULARIZATION = 1e-4  # Used when USE_ADAMW is False
@@ -49,11 +50,6 @@ L2_REGULARIZATION = 1e-4  # Used when USE_ADAMW is False
 #############################
 # Helper Functions
 #############################
-
-# Use preprocessing functions from utils to avoid mismatches
-
-# load_vertex_data and load_quaternion_from_json are imported from utils
-
 def _load_and_process_sample(json_path_tensor, edges_tensor, faces_tensor, image_width_tensor, image_height_tensor):
     """
     Loads and processes a single sample. To be wrapped by tf.py_function.

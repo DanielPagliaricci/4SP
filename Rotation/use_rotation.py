@@ -17,35 +17,23 @@ from utils import (
 from train_rotation import geodesic_loss, geodesic_deg, UnitNormalize
 
 #############################
-# Configuration
+# CONFIGURATION #
 #############################
-# Note: Update these paths if your data or model is located elsewhere.
-BASE_PATH = "/Users/dani/Desktop/ICTati/Second_Attempt_AngularDataBase/TANGO"
+BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR: str = os.path.dirname(BASE_DIR)
 
-# Use the same dataset structure as preprocessing/training
-#VERTICES_FOLDER = os.path.join(BASE_PATH, "vertices_data_sample_TANGO_REF_sample_article")
-#IMAGES_FOLDER = os.path.join(BASE_PATH, "renders_sample_TANGO_sample")
-
-VERTICES_FOLDER = os.path.join("/Users/dani/PycharmProjects/ML_GPU_TEST/IC_TATI_2/TANGO/zEPnP_RANSEC/preprocessed_same_noise")
-#VERTICES_FOLDER = os.path.join(BASE_PATH, "vertices_data_sample_TANGO_REF_sample1")
-IMAGES_FOLDER = os.path.join(BASE_PATH, "renders_sample_TANGO_sample1")
+JSON_DIR: str = os.path.join(ROOT_DIR, "Database" , "Only_Obj_Env" , "JSON_Data_REF")
+IMAGES_DIR: str = os.path.join(ROOT_DIR, "Database" , "Only_Obj_Env" , "Rendered_Images")
+OBJECT_MESH_PATH: str = os.path.join(ROOT_DIR, "Database" , "Only_Obj_Env" , "Object_Information", "mesh_information_REF_TANGO.json")
 
 
-MODEL_PATH = "models_good_250/best_model.keras"  # Relative path to the model saved by the training script
-LOG_DIR = "testing_plots_enchanced_ref_comparison"
+MODEL_PATH = os.path.join(BASE_DIR, "models", "best_model.keras")
+LOG_DIR = "use_plots"
 IMAGE_WIDTH = 1920
 IMAGE_HEIGHT = 1080
 NUM_SAMPLES_TO_VISUALIZE = 10
 TRIM_WORST_FRACTION = 0.10  # Fraction of worst samples (by angular error) to exclude from summary metrics
 MAX_ERROR_ALERT_DEG = 150.0  # Print samples with angular error >= this threshold
-
-# Mesh information JSON — match preprocessing/training (REF mesh)
-OBJECT_MESH_PATH = os.path.join(
-    BASE_PATH,
-    "Object_Information",
-    "mesh_information_REF_TANGO.json",
-)
-
 
 def _load_mesh_geometry(mesh_path):
     """Deprecated local helper. Use utils.load_mesh_geometry instead."""
@@ -455,7 +443,7 @@ def main():
 
     # Data Loading (train-compatible)
     print("Loading and processing dataset (train-compatible REF mesh)...")
-    X, Y, raw_X, json_files = load_dataset(VERTICES_FOLDER, EDGES, FACES, IMAGE_WIDTH, IMAGE_HEIGHT)
+    X, Y, raw_X, json_files = load_dataset(JSON_DIR, EDGES, FACES, IMAGE_WIDTH, IMAGE_HEIGHT)
     print(f"Loaded dataset: X shape: {X.shape}, Y shape: {Y.shape}")
     if X.shape[0] == 0:
         print("No data loaded. Please check your dataset folder and JSON format.")
@@ -498,7 +486,7 @@ def main():
                 base_name = os.path.splitext(os.path.basename(json_files[i]))[0]
                 image_path = None
                 for ext in [".png", ".jpg", ".jpeg"]:
-                    potential_path = os.path.join(IMAGES_FOLDER, base_name + ext)
+                    potential_path = os.path.join(IMAGES_DIR, base_name + ext)
                     if os.path.exists(potential_path):
                         image_path = potential_path
                         break

@@ -8,7 +8,11 @@ from pathlib import Path
 from bpy_extras.object_utils import world_to_camera_view
 import time
 
-#HARDCODED VALUES
+
+#############################
+# CONFIGURATIONS #
+#############################
+# TODO: CHANGE THE FILE NAME LOGIC
 ONLY_JSON = True # DONT CHANGE THIS VALUE
 np.random.seed(2)
 TOTAL_ROTATIONS = 100 # Total number of random rotations to generate

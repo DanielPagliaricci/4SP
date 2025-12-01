@@ -346,7 +346,7 @@ class VerticesDatabaseCreator(bpy.types.Operator):
     
     def make_filename(self, rotation_index, camera_name):
         """Creates standardized filename for both image and JSON files"""
-        return f"rotation_{rotation_index:04d}_camera_{camera_name}"
+        return f"rotation_{rotation_index}"
     
     def render_init(self, scene, depsgraph):
         self.rendering = True
@@ -367,24 +367,31 @@ class VerticesDatabaseCreator(bpy.types.Operator):
         last_rotation = -1
         
         try:
-            pattern_img = "rotation_*_camera_*.png"
-            pattern_json = "rotation_*_camera_*.json"
+            pattern_img = "rotation_*.png"
+            pattern_json = "rotation_*.json"
             img_rotations = set()
             ref_rotations = set()
             mask_rotations = set()
             for file in self.image_path.glob(pattern_img):
                 try:
-                    img_rotations.add(int(file.stem.split('_')[1]))
+                    # Handle filenames like rotation_123.png
+                    parts = file.stem.split('_')
+                    if len(parts) >= 2 and parts[0] == "rotation":
+                         img_rotations.add(int(parts[1]))
                 except:
                     pass
             for file in self.json_path_ref.glob(pattern_json):
                 try:
-                    ref_rotations.add(int(file.stem.split('_')[1]))
+                    parts = file.stem.split('_')
+                    if len(parts) >= 2 and parts[0] == "rotation":
+                        ref_rotations.add(int(parts[1]))
                 except:
                     pass
             for file in self.json_path_mask.glob(pattern_json):
                 try:
-                    mask_rotations.add(int(file.stem.split('_')[1]))
+                    parts = file.stem.split('_')
+                    if len(parts) >= 2 and parts[0] == "rotation":
+                        mask_rotations.add(int(parts[1]))
                 except:
                     pass
             completed_rotations = img_rotations.intersection(ref_rotations).intersection(mask_rotations)

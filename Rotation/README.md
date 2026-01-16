@@ -234,6 +234,7 @@ The 4SP pipeline achieves lower orientation error without requiring explicit cam
 
 ## Related Modules
 
+
 | Stage | Module | Description |
 |-------|--------|-------------|
 | 1 | [Segmentation](../Contour/) | Object detection and mask generation |

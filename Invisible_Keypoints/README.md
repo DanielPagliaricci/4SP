@@ -53,7 +53,7 @@ To prevent label leakage, coordinates of non-visible vertices are **zeroed out**
 
 ## Data Augmentation
 
-![Augmentation Visualization](../docs/assets/invis_augmentation.png)
+![Augmentation Visualization](../docs/assets/invis_aug.png)
 
 Augmentation operates on **inputs only**, never on supervision targets:
 

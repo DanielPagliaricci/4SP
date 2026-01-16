@@ -99,7 +99,7 @@ Where:
 
 ## Prediction Output
 
-![Prediction Visualization](../docs/assets/invis_aug.png)
+![Prediction Visualization](../docs/assets/invis_prediction.png)
 
 The network outputs normalized coordinates for all vertices. At inference:
 - **Visible vertices**: Use ground truth positions from upstream detector

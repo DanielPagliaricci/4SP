@@ -1,4 +1,4 @@
-# Visible Keypoints Detection (Stage 2)
+# Stage 2: Visible Keypoints Detection
 
 This module implements the **second stage** of the 4-Stage Pipeline (4SP) for monocular spacecraft pose estimation. Given a cropped image of the target object, the network predicts the 2D pixel coordinates of all **visible keypoints** (vertices) using a heatmap regression approach.
 

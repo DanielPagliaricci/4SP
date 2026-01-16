@@ -6,7 +6,7 @@
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange)](https://www.tensorflow.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-red)](https://pytorch.org/)
 
-## 🛰️ Overview
+## Overview
 
 This repository contains the official implementation of the research paper presented at the **76th International Astronautical Congress (IAC 2025)** by **Daniel Pagliaricci**.
 
@@ -81,7 +81,7 @@ pip install -r Contour/requirements.txt
 pip install tensorflow matplotlib scipy numpy
 ```
 
-## 🚀 Usage
+## Usage
 
 ### Data Preparation
 The pipeline expects synthetic data generated using the scripts in `Database/`. The data should be preprocessed before training each stage.
@@ -136,7 +136,7 @@ The method achieves state-of-the-art performance on synthetic benchmarks, signif
   <em>Figure 2: Qualitative results showing keypoint detection and final wireframe alignment.</em>
 </p>
 
-## 📝 Citation
+## Citation
 
 If you use this code or research in your work, please cite the IAC 2025 paper:
 
@@ -150,6 +150,17 @@ If you use this code or research in your work, please cite the IAC 2025 paper:
 }
 ```
 
-## 📄 License
+## Acknowledgements
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This work was supported by:
+- National Council for Scientific and Technological Development (CNPq)
+- National Fund for Scientific and Technological Development (FNDCT)
+- Ministry of Science, Technology and Innovations (MCTI)
+
+Process No. 407721/2022-3
+
+---
+
+## License
+
+This project is part of ongoing research at the Federal University of Sao Carlos (UFSCar), Department of Electrical Engineering.

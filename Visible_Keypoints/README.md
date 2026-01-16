@@ -190,6 +190,17 @@ Visible_Keypoints/
 - PIL (Pillow)
 - tqdm (optional)
 
+## Related Modules
+
+| Stage | Module | Description |
+|-------|--------|-------------|
+| 1 | [Segmentation](../Contour/) | Object detection and mask generation |
+| **2** | **Visible Keypoints** | **Visible vertex detection** |
+| 3 | [Invisible Keypoints](../Invisible_Keypoints/) | Hidden vertex estimation (this module) |
+| 4 | [Rotation Neural Net](../Rotation/) | Quaternion pose regression |
+
+
+
 ## References
 
 This implementation is based on the methodology described in:

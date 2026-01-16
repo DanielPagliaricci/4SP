@@ -99,7 +99,7 @@ Where:
 
 ## Prediction Output
 
-![Prediction Visualization](../docs/assets/invis_prediction.png)
+![Prediction Visualization](../docs/assets/invis_aug.png)
 
 The network outputs normalized coordinates for all vertices. At inference:
 - **Visible vertices**: Use ground truth positions from upstream detector
@@ -209,7 +209,7 @@ Invisible_Keypoints/
 
 | Stage | Module | Description |
 |-------|--------|-------------|
-| 1 | [Segmentation](../Segmentation_Neural_Net/) | Object detection and mask generation |
+| 1 | [Segmentation](../Contour/) | Object detection and mask generation |
 | 2 | [Visible Keypoints](../Visible_Keypoints/) | Visible vertex detection |
 | **3** | **Invisible Keypoints** | **Hidden vertex estimation (this module)** |
-| 4 | [Rotation Neural Net](../Rotation_Neural_Net/) | Quaternion pose regression |
+| 4 | [Rotation Neural Net](../Rotation/) | Quaternion pose regression |

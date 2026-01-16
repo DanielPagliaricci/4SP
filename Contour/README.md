@@ -281,46 +281,11 @@ cropped_image = place_on_black_background(cropped_image)
 
 ---
 
-## Citation
+## Related Modules
 
-If you use this code in your research, please cite:
-
-```bibtex
-@inproceedings{pagliaricci2025multistage,
-  title={A Multi-Stage Deep Neural Network Approach for Angular Pose Estimation
-         in Nanosatellite Capture},
-  author={Pagliaricci, Daniel and Pazelli, Tatiana F. P. A. T.},
-  booktitle={76th International Astronautical Congress (IAC 2025)},
-  year={2025},
-  organization={International Astronautical Federation (IAF)},
-  address={Sydney, Australia}
-}
-```
-
----
-
-## Acknowledgements
-
-This work was supported by:
-- National Council for Scientific and Technological Development (CNPq)
-- National Fund for Scientific and Technological Development (FNDCT)
-- Ministry of Science, Technology and Innovations (MCTI)
-
-Process No. 407721/2022-3
-
----
-
-## License
-
-This project is part of ongoing research at the Federal University of Sao Carlos (UFSCar), Department of Electrical Engineering.
-
----
-
-## Related Stages
-
-| Stage | Description | Link |
-|-------|-------------|------|
-| **Stage 1** | Contour Detection (This module) | `Contour/` |
-| **Stage 2** | Visible Vertex Detection | `Visible_Neural_Net/` |
-| **Stage 3** | Non-Visible Vertex Estimation | `Invisible_Neural_Net/` |
-| **Stage 4** | Angular Pose Estimation | `Rotation_Neural_Net/` |
+| Stage | Module | Description |
+|-------|--------|-------------|
+| **1** | **Segmentation** | **Object detection and mask generation** |
+| 2 | [Visible Keypoints](../Visible_Keypoints/) | Visible vertex detection |
+| 3 | [Invisible Keypoints](../Invisible_Keypoints/) | Hidden vertex estimation (this module) |
+| 4 | [Rotation Neural Net](../Rotation/) | Quaternion pose regression |

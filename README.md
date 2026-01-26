@@ -142,7 +142,7 @@ If you use this code or research in your work, please cite the IAC 2025 paper:
 
 ```bibtex
 @inproceedings{pagliaricci20254sp,
-  title={Monocular Pose Estimation of Non-Cooperative Targets using a 4-Stage Deep Learning Pipeline},
+  title={A Multi-Stage Deep Neural Network Approach for Angular Pose Estimation in Nanosatellite Capture.},
   author={Pagliaricci, Daniel},
   booktitle={76th International Astronautical Congress (IAC)},
   year={2025},
